@@ -246,3 +246,9 @@ dmypy.json
 .prof
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,python
+/.idea/Adaboost.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/.gitignore
+/.idea/inspectionProfiles/profiles_settings.xml
