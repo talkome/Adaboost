@@ -70,8 +70,8 @@ def run(points, adaboost_rules):
                                                       minimal_error_rule[0].classify(p[0]) * p[0].type))
     # TODO: this function should return list of 8 errors:
     #  first error - first rule error
-    #   second error - the error of two first rules error
-    #   third error - the error of 3 first rules error
+    #   second error - the error of two first rules
+    #   third error - the error of 3 first rules
     #   etc..
     ##
     return best_rules
