@@ -2,6 +2,7 @@
 # 311148902
 # 311300784
 
+
 # Load libraries
 
 import pandas as pd
@@ -86,12 +87,18 @@ print(iris_X_train.head)
 print("iris y train head:")
 print(iris_Y_train.head)
 
+# extract data from files
 # for each dataset:
 #   run adaboost 100 times
-#     run adaboost on test set and get 8 best rules and
-#     do some calculations on the 8 best rules:
-#       from 1 to 8
+#       split dataset to train and test
+#       run adaboost on the test set and get 8 best rules and their weights
+#       do some calculations on the 8 best rules:
+#           create a list
+#           for k in range(8):
+#               compute the empirical error of the function Hk on the test set
+#               compute the true error of Hk on the training set
 #
+#  #
 
 """# Test"""
 iris_train_points = ds_to_points(iris_X_train, iris_Y_train)
