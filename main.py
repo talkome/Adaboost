@@ -97,7 +97,6 @@ print(iris_Y_train.head)
 #           for k in range(8):
 #               compute the empirical error of the function Hk on the test set
 #               compute the true error of Hk on the training set
-#
 #  #
 
 """# Test"""
@@ -116,5 +115,5 @@ adaboost_result = Adaboost.run(iris_train_points, rules)
 print("\n Results:")
 
 for r in adaboost_result:
-    r[0].print_r()
-    print(r[2])
+    r["rule"].print_r()
+    print(r["weight"])

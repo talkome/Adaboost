@@ -1,8 +1,7 @@
 """## Adaboost Algorithm"""
 import math
+
 import numpy as np
-from Point import Point
-from Rule import Rule
 
 maximum_weight = 30
 
@@ -35,10 +34,10 @@ def run(points, adaboost_rules):
     initial_point_weight = 1 / len(points)
 
     # list of lists [point, weight]
-    weighted_points = [[p, initial_point_weight] for p in points]
+    weighted_points = [{"point": p, "weight": initial_point_weight} for p in points]
 
     # list of lists [rule, error, weight]
-    w_e_rules = [[rule, 0, 0] for rule in adaboost_rules]
+    w_e_rules = [{"rule": rule, "error": 0, "weight": 0} for rule in adaboost_rules]
 
     best_rules = []
 
@@ -49,25 +48,29 @@ def run(points, adaboost_rules):
         for rule in w_e_rules:
             for p in weighted_points:
                 # return 1 if wrong, else 0
-                if not rule[0].classify_is_correct(p[0]):
-                    rule[1] += p[1]
+                if not rule["rule"].classify_is_correct(p["point"]):
+                    rule["error"] += p["weight"]
 
-            if rule[1] < minimal_error_rule[1]:
+            if rule["error"] < minimal_error_rule["weight"]:
                 minimal_error_rule = rule
 
         # update the weight of the minimal error rule and save it to best rules
-        if (minimal_error_rule[1]) != 0:
-            minimal_error_rule[2] = (1 / 2) * np.log((1 - minimal_error_rule[1]) / (minimal_error_rule[1]))
+        if (minimal_error_rule["error"]) != 0 and ((1 - minimal_error_rule["error"]) /
+                                                   minimal_error_rule["error"] > 0):
+
+            minimal_error_rule["weight"] = (1 / 2) * np.log((1 - minimal_error_rule["error"]) /
+                                                            minimal_error_rule["error"])
         else:
-            minimal_error_rule[2] = maximum_weight  # TODO: risky
+            minimal_error_rule["weight"] = maximum_weight  # TODO: risky
         best_rules.append(minimal_error_rule)
 
         # update all points weights
         for p in weighted_points:
-            z += p[1]
+            z += p["weight"]
         for p in weighted_points:
-            p[1] = (1 / z) * p[1] * math.pow(math.e, (-minimal_error_rule[2] *
-                                                      minimal_error_rule[0].classify(p[0]) * p[0].type))
+            p["weight"] = (1 / z) * p["weight"] * math.pow(math.e, (-minimal_error_rule["weight"] *
+                                                                    minimal_error_rule["rule"].classify(p["point"]) *
+                                                                    p["point"].type))
     # TODO: this function should return list of 8 errors:
     #  first error - first rule error
     #   second error - the error of two first rules error
