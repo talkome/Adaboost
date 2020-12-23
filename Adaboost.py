@@ -73,8 +73,8 @@ def run(points, adaboost_rules):
                                                                     p["point"].type))
     # TODO: this function should return list of 8 errors:
     #  first error - first rule error
-    #   second error - the error of two first rules error
-    #   third error - the error of 3 first rules error
+    #   second error - the error of two first rules
+    #   third error - the error of 3 first rules
     #   etc..
     ##
     return best_rules

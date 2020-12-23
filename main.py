@@ -87,8 +87,8 @@ print(iris_X_train.head)
 print("iris y train head:")
 print(iris_Y_train.head)
 
-# extract data from files
-# for each dataset:
+# TODO: extract data from files
+# TODO: for each dataset:
 #   run adaboost 100 times
 #       split dataset to train and test
 #       run adaboost on the test set and get 8 best rules and their weights
