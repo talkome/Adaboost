@@ -4,13 +4,13 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from Point import Point
 from Rule import Rule
-
+import copy
 MAX_WEIGHT = 30
 
 
 def df_to_points(features, labels):
-    np_features = features.to_numpy()
-    np_labels = labels.to_numpy()
+    np_features = features.to_numpy(dtype='float32')
+    np_labels = labels.to_numpy(dtype='float32')
     points = []
     for f, l in zip(np_features, np_labels):
         p = Point(f[0], f[1], l)
@@ -80,12 +80,8 @@ def compute_error(best_rules, k, points):
         classification = voting(best_rules, k, point)
         if classification == -1:
             missclassification += 1
-    print("missclassification:", missclassification)
+    # print("missclassification:", missclassification)
     return missclassification / len(points)
-
-
-# def get_true_error_on_training(best_rules, k, train_points):
-#     pass
 
 
 def run(features_df, labels_df):
@@ -94,21 +90,22 @@ def run(features_df, labels_df):
     train_points = df_to_points(train_x, train_y)
     test_points = df_to_points(test_x, test_y)
     all_possible_train_rules = rules_from_points(train_points)
-
+    # for rule in all_possible_train_rules:
+    #     rule.print_r()
     # Initialize point weights 𝐷_𝑡 (𝑥_𝑖 )=1/𝑛
     train_initial_point_weight = 1 / len(train_points)
 
     # list of dictionaries {point, weight}
-    weighted_points = [{"point": p, "weight": train_initial_point_weight} for p in train_points]
+    weighted_points = [{"point": copy.deepcopy(p), "weight": train_initial_point_weight} for p in train_points]
 
     # list of dictionaries {rule, error, weight}
-    w_e_rules = [{"rule": rule, "error": 0, "weight": 0} for rule in all_possible_train_rules]
+    w_e_rules = [{"rule": copy.deepcopy(rule), "error": 0, "weight": 0} for rule in all_possible_train_rules]
 
     best_rules = []
 
     k = 8  # number of iterations
     z = 0  # sum the points weights
-    minimal_error_rule = w_e_rules[0]
+    minimal_error_rule = copy.deepcopy(w_e_rules[0])
     for i in range(k):
         for rule in w_e_rules:
             for p in weighted_points:
@@ -117,17 +114,17 @@ def run(features_df, labels_df):
                     rule["error"] += p["weight"]
 
             if rule["error"] < minimal_error_rule["error"]:
-                minimal_error_rule = rule
-        # TODO: is the second rule necessary? if the mana is 0 its ok I think
+                minimal_error_rule = copy.deepcopy(rule)
         # update the weight of the minimal error rule and save it to best rules
-        if (minimal_error_rule["error"]) != 0 and ((1 - minimal_error_rule["error"]) /
-                                                   minimal_error_rule["error"] > 0):
-
-            minimal_error_rule["weight"] = (1 / 2) * np.log((1 - minimal_error_rule["error"]) /
-                                                            minimal_error_rule["error"])
-        else:
-            minimal_error_rule["weight"] = MAX_WEIGHT  # TODO: risky
-        best_rules.append(minimal_error_rule)
+        if minimal_error_rule["error"] == 0:
+            minimal_error_rule["error"] = 0.0001
+        minimal_error_rule["weight"] = (1 / 2) * np.log((1 - minimal_error_rule["error"]) / minimal_error_rule["error"])
+        # if (minimal_error_rule["error"]) != 0 and ((1 - minimal_error_rule["error"]) / minimal_error_rule["error"] > 0):
+        #
+        #     minimal_error_rule["weight"] = (1 / 2) * np.log((1 - minimal_error_rule["error"]) / minimal_error_rule["error"])
+        # else:
+        #     minimal_error_rule["weight"] = MAX_WEIGHT  # TODO: risky
+        best_rules.append(copy.deepcopy(minimal_error_rule))
         # print("minimal error rule:", minimal_error_rule)
         # print("current best rules list", best_rules)
 
@@ -139,13 +136,13 @@ def run(features_df, labels_df):
                                                                     minimal_error_rule["rule"].classify(p["point"]) *
                                                                     p["point"].type))
         # clear rules errors # TODO: risky
-        # for rule in w_e_rules:
-        #     rule["error"] = 0
-        #     rule["weight"] = 0
+        for rule in w_e_rules:
+            rule["error"] = 0
+            rule["weight"] = 0
 
 
     # at this point we have the list of 8 best rules after one adaboost run
-    # TODO: this function should return list of 8 errors:
+    #  this function should return list of 8 errors:
     #  first error - first rule error on test set
     #   second error - the error of two first rules on test set
     #   third error - the error of 3 first rules on test set
@@ -160,10 +157,13 @@ def run(features_df, labels_df):
         hkx_stats[i]["true_error_on_training"] = compute_error(best_rules, i, train_points)
 
     # returning stats of one adaboost run
-    # TODO: at the main - run 100 adaboost runs. sum all stats of each rules combination.
+    # at the main - run 100 adaboost runs. sum all stats of each rules combination.
     # after 100 runs, divide all stats by 100. and wev got our results!
     # do it for both data sets
     ##
+    
+    # for s in hkx_stats:
+    #     print(s)
     return hkx_stats
 
 
@@ -209,7 +209,7 @@ def run(features_df, labels_df):
 #             p["weight"] = (1 / z) * p["weight"] * math.pow(math.e, (-minimal_error_rule["weight"] *
 #                                                                     minimal_error_rule["rule"].classify(p["point"]) *
 #                                                                     p["point"].type))
-#     # TODO: this function should return list of 8 errors:
+#     # this function should return list of 8 errors:
 #     #  first error - first rule error
 #     #   second error - the error of two first rules
 #     #   third error - the error of 3 first rules

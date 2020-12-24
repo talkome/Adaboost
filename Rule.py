@@ -1,3 +1,6 @@
+import copy
+
+
 class Rule:
     def __init__(self, p1, p2, side):
         self.p1 = p1
