@@ -2,6 +2,8 @@
 import math
 import numpy as np
 from sklearn.model_selection import train_test_split
+from Point import Point
+from Rule import Rule
 
 MAX_WEIGHT = 30
 
@@ -52,23 +54,29 @@ def rules_from_points(points_list):
 # TODO: we need to make sure that a line wont be considered twice (two sides of same line is ok)
 #######################################
 
+# that's how a complex rule classifies
 
-def voting(best_rules, k, weighted_point):
+
+def voting(best_rules, k, point):
     aihix_sum = 0
     for i in range(k):
-        aihix_sum += best_rules[i]["weight"] * best_rules[i]["rule"].classify(weighted_point["point"])
+        aihix_sum += best_rules[i]["weight"] * best_rules[i]["rule"].classify(point)
     if aihix_sum < 0:
         return -1
     else:
         return 1
 
 
-def get_empirical_error_on_test(best_rules, k, test_points):
-    pass
+def compute_error(best_rules, k, points):
+    missclassification = 0
+    for point in points:
+        if voting(best_rules, k, point) == -1:
+            missclassification += 1
+    return missclassification / len(points)
 
 
-def get_true_error_on_training(best_rules, k, train_points):
-    pass
+# def get_true_error_on_training(best_rules, k, train_points):
+#     pass
 
 
 def run(features_df, labels_df):
@@ -120,7 +128,7 @@ def run(features_df, labels_df):
                                                                     minimal_error_rule["rule"].classify(p["point"]) *
                                                                     p["point"].type))
         # clear rules errors # TODO: risky
-        for rule in all_possible_train_rules:
+        for rule in w_e_rules:
             rule["error"] = 0
             rule["weight"] = 0
 
@@ -133,10 +141,10 @@ def run(features_df, labels_df):
     #   etc..
     #   do the computing here
     #
-    hkx_stats = [{"empirical_error_on_test": 0, "true_error_on_training": 0} for i in range(k)]
+    hkx_stats = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(k)]
     for i in range(k):
-        hkx_stats[i]["empirical_error_on_test"] = get_empirical_error_on_test(best_rules, i, test_points)
-        hkx_stats[i]["true_error_on_training"] = get_true_error_on_training(best_rules, i, train_points)
+        hkx_stats[i]["empirical_error_on_test"] = compute_error(best_rules, i, test_points)
+        hkx_stats[i]["true_error_on_training"] = compute_error(best_rules, i, train_points)
 
     # returning stats of one adaboost run
     # TODO: at the main - run 100 adaboost runs. sum all stats of each rules combination.
