@@ -6,7 +6,6 @@ import pandas as pd
 import Adaboost
 
 
-
 # extract data from files
 # for each dataset:
 #   run adaboost 100 times
@@ -57,26 +56,24 @@ def main():
 
     ################## at this point iris and body_temp should be clean and separated to features and labels ##################
 
-    #single adaboost run.
+    # single adaboost run.
     # input: features panda dataframe, labels panda dataframe
     # output: list of 8 best rules with errors and weights
-    # sum_of_8_best_complicated_rules_stats = \
-    #     [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
-    # for i in range(100):
-    #     curr_run = Adaboost.run(iris_x, iris_y)
-    #     for index, rule in enumerate(sum_of_8_best_complicated_rules_stats):
-    #         rule["empirical_error_on_test"] += curr_run[index]["empirical_error_on_test"]
-    #         rule["true_error_on_training"] += curr_run[index]["true_error_on_training"]
-    #     ################ debugging ################
-    #     # print("run #", i, "stats:", curr_run)
-    #
-    # avg_errors_of_8_best = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
-    # for index, rule in enumerate(avg_errors_of_8_best):
-    #     rule["empirical_error_on_test"] = sum_of_8_best_complicated_rules_stats[index]["empirical_error_on_test"] / 100
-    #     rule["true_error_on_training"] = sum_of_8_best_complicated_rules_stats[index]["true_error_on_training"] / 100
-    #     print("Rule #", index, "info:\n"
-    #           , "\tempirical_error_on_test -", rule["empirical_error_on_test"]
-    #           , "\ttrue_error_on_training -", rule["true_error_on_training"])
+    sum_of_8_best_complicated_rules_stats = \
+        [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+    for i in range(100):
+        curr_run = Adaboost.run(iris_x, iris_y)
+        for index, rule in enumerate(sum_of_8_best_complicated_rules_stats):
+            rule["empirical_error_on_test"] += curr_run[index]["empirical_error_on_test"]
+            rule["true_error_on_training"] += curr_run[index]["true_error_on_training"]
+
+    avg_errors_of_8_best = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+    for index, rule in enumerate(avg_errors_of_8_best):
+        rule["empirical_error_on_test"] = sum_of_8_best_complicated_rules_stats[index]["empirical_error_on_test"] / 100
+        rule["true_error_on_training"] = sum_of_8_best_complicated_rules_stats[index]["true_error_on_training"] / 100
+        print("Rule #", index, "info:\n"
+              , "\tempirical_error_on_test -", rule["empirical_error_on_test"]
+              , "\ttrue_error_on_training -", rule["true_error_on_training"])
 
 
 ####################body temp######################
