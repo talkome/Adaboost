@@ -1,4 +1,3 @@
-"""## Adaboost Algorithm"""
 import math
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -23,9 +22,7 @@ def rules_from_points(points_list):
     for p1 in points:
         for p2 in points:
             if p1.x != p2.x or p1.y != p2.y:
-                rule = Rule(p1, p2, "up")
-                new_rules.append(rule)
-                rule = Rule(p1, p2, "down")
+                rule = Rule(p1, p2)
                 new_rules.append(rule)
         points.remove(p1)
     return new_rules
@@ -47,9 +44,9 @@ def compute_error(best_rules, k, points):
     missclassification = 0
     for point in points:
         classification = voting(best_rules, k, point)
-        if classification == -1:
+        if classification != point.type:
             missclassification += 1
-    return missclassification / len(points)
+    return missclassification #/ len(points)
 
 # input : points with labels (points list), rules list
 # output : weights of rules (list)
@@ -80,13 +77,14 @@ def run(features_df, labels_df):
     weighted_points = [{"point": copy.deepcopy(p), "weight": train_initial_point_weight} for p in train_points]
 
     # list of dictionaries {rule, error, weight}
-    w_e_rules = [{"rule": copy.deepcopy(rule), "error": 0, "weight": 0} for rule in all_possible_train_rules]
+    ########### with normalization
+    w_e_rules = [{"rule": copy.deepcopy(rule), "error": 0, "weight": 1/len(all_possible_train_rules)} for rule in all_possible_train_rules]
 
     best_rules = []
 
     k = 8  # number of iterations
     z = 0  # sum the points weights
-    minimal_error_rule = copy.deepcopy(w_e_rules[0])
+    # minimal_error_rule = copy.deepcopy(w_e_rules[0])
     for i in range(k):
         for rule in w_e_rules:
             for p in weighted_points:
@@ -94,9 +92,10 @@ def run(features_df, labels_df):
                 if not rule["rule"].classify_is_correct(p["point"]):
                     rule["error"] += p["weight"]
 
-            if rule["error"] < minimal_error_rule["error"]:
-                minimal_error_rule = copy.deepcopy(rule)
+            # if rule["error"] < minimal_error_rule["error"]:
+            #     minimal_error_rule = copy.deepcopy(rule)
         # update the weight of the minimal error rule and save it to best rules
+        minimal_error_rule = copy.deepcopy(sorted(w_e_rules, key=lambda x: x["error"])[0])
         if minimal_error_rule["error"] == 0:
             minimal_error_rule["error"] = 0.0001
         minimal_error_rule["weight"] = (1 / 2) * np.log((1 - minimal_error_rule["error"]) / minimal_error_rule["error"])
@@ -112,7 +111,7 @@ def run(features_df, labels_df):
         # clear rules errors
         for rule in w_e_rules:
             rule["error"] = 0
-            rule["weight"] = 0
+            rule["weight"] = 1/len(all_possible_train_rules)
 
     # at this point we have the list of 8 best rules after one adaboost run
     #  this function should return list of 8 errors:
@@ -122,8 +121,7 @@ def run(features_df, labels_df):
     #   etc..
     #   do the computing here
     #
-    print("Best rules:")
-    print(best_rules)
+
     hkx_stats = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(k)]
     for i in range(k):
         hkx_stats[i]["empirical_error_on_test"] = compute_error(best_rules, i, test_points)

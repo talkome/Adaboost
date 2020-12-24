@@ -51,20 +51,20 @@ def main():
     # print(iris_y.shape)
     iris_x = iris.drop(labels="iris_type", axis=1)
 
-    ################## at this point iris and body_temp should be clean and separated to features and labels ##################
-
     # single adaboost run.
     # input: features panda dataframe, labels panda dataframe
     # output: list of 8 best rules with errors and weights
+
+    print("######## Iris results ########")
     sum_of_8_best_complicated_rules_stats = \
-        [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+        [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(8)]
     for i in range(100):
         curr_run = Adaboost.run(iris_x, iris_y)
         for index, rule in enumerate(sum_of_8_best_complicated_rules_stats):
             rule["empirical_error_on_test"] += curr_run[index]["empirical_error_on_test"]
             rule["true_error_on_training"] += curr_run[index]["true_error_on_training"]
 
-    avg_errors_of_8_best = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+    avg_errors_of_8_best = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(8)]
     for index, rule in enumerate(avg_errors_of_8_best):
         rule["empirical_error_on_test"] = sum_of_8_best_complicated_rules_stats[index]["empirical_error_on_test"] / 100
         rule["true_error_on_training"] = sum_of_8_best_complicated_rules_stats[index]["true_error_on_training"] / 100
@@ -72,16 +72,16 @@ def main():
               , "\tempirical_error_on_test -", rule["empirical_error_on_test"]
               , "\ttrue_error_on_training -", rule["true_error_on_training"])
 
-    ####################body temp######################
+    print("\n######## Body temperture results ########")
     sum_of_8_best_complicated_rules_stats2 = \
-        [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+        [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(8)]
     for i in range(100):
         curr_run2 = Adaboost.run(body_temperature_x, body_temperature_y)
         for index, rule in enumerate(sum_of_8_best_complicated_rules_stats2):
             rule["empirical_error_on_test"] += curr_run2[index]["empirical_error_on_test"]
             rule["true_error_on_training"] += curr_run2[index]["true_error_on_training"]
 
-    avg_errors_of_8_best2 = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
+    avg_errors_of_8_best2 = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(8)]
     for index, rule in enumerate(avg_errors_of_8_best2):
         rule["empirical_error_on_test"] = sum_of_8_best_complicated_rules_stats2[index]["empirical_error_on_test"] / 100
         rule["true_error_on_training"] = sum_of_8_best_complicated_rules_stats2[index]["true_error_on_training"] / 100

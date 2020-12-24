@@ -8,7 +8,8 @@ class Point:
         print("x:", self.x, ", y:", self.y, ", type:", self.type)
 
     def to_string(self):
-        s = "x:"
+        s = "point- "
+        s += "x:"
         s += str(self.x)
         s += ", y:"
         s += str(self.y)
