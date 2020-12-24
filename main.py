@@ -31,9 +31,6 @@ def main():
     body_temperature_y = body_temperature.gender
     body_temperature_x = body_temperature.drop(labels="gender", axis=1)
 
-    # print(body_temperature_y.head)
-    # print(body_temperature_x.head)
-
     # importing iris dataset
     iris = pd.read_csv("iris.data", names=["sepal_length", "sepal_width", "petal_length", "petal_width", "iris_type"],
                        encoding="ISO-8859-1", low_memory=False)
@@ -75,8 +72,7 @@ def main():
               , "\tempirical_error_on_test -", rule["empirical_error_on_test"]
               , "\ttrue_error_on_training -", rule["true_error_on_training"])
 
-
-####################body temp######################
+    ####################body temp######################
     sum_of_8_best_complicated_rules_stats2 = \
         [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
     for i in range(100):
@@ -84,8 +80,6 @@ def main():
         for index, rule in enumerate(sum_of_8_best_complicated_rules_stats2):
             rule["empirical_error_on_test"] += curr_run2[index]["empirical_error_on_test"]
             rule["true_error_on_training"] += curr_run2[index]["true_error_on_training"]
-        ################ debugging ################
-        # print("run #", i, "stats:", curr_run)
 
     avg_errors_of_8_best2 = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
     for index, rule in enumerate(avg_errors_of_8_best2):
@@ -98,5 +92,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

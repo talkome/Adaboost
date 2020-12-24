@@ -44,7 +44,6 @@ def voting(best_rules, k, point):
 
 
 def compute_error(best_rules, k, points):
-    # print("compute_error k:", k)
     missclassification = 0
     for point in points:
         classification = voting(best_rules, k, point)
@@ -73,8 +72,7 @@ def run(features_df, labels_df):
     train_points = df_to_points(train_x, train_y)
     test_points = df_to_points(test_x, test_y)
     all_possible_train_rules = rules_from_points(train_points)
-    # for rule in all_possible_train_rules:
-    #     rule.print_r()
+
     # Initialize point weights 𝐷_𝑡 (𝑥_𝑖 )=1/𝑛
     train_initial_point_weight = 1 / len(train_points)
 
@@ -128,10 +126,7 @@ def run(features_df, labels_df):
     print(best_rules)
     hkx_stats = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(k)]
     for i in range(k):
-        # print("hkx_stats[i]", i)
         hkx_stats[i]["empirical_error_on_test"] = compute_error(best_rules, i, test_points)
         hkx_stats[i]["true_error_on_training"] = compute_error(best_rules, i, train_points)
 
-    # for s in hkx_stats:
-    #     print(s)
     return hkx_stats

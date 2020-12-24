@@ -67,4 +67,3 @@ class Rule:
         else:
             print("y =", self.m, "x +", self.n, "side:", self.side, "(p1:", self.p1.to_string(), ", p2:",
                   self.p2.to_string())
-
