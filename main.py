@@ -64,6 +64,9 @@ def main():
         for index, rule in enumerate(sum_of_8_best_complicated_rules_stats):
             rule["empirical_error_on_test"] += curr_run[index]["empirical_error_on_test"]
             rule["true_error_on_training"] += curr_run[index]["true_error_on_training"]
+        ################ debugging ################
+        # print("run #", i, "stats:", curr_run)
+
     avg_errors_of_8_best = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for i in range(8)]
     for index, rule in enumerate(avg_errors_of_8_best):
         rule["empirical_error_on_test"] = sum_of_8_best_complicated_rules_stats[index]["empirical_error_on_test"] / 100

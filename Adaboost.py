@@ -62,9 +62,12 @@ def voting(best_rules, k, point):
     for i in range(k):
         aihix_sum += best_rules[i]["weight"] * best_rules[i]["rule"].classify(point)
     if aihix_sum < 0:
+        # print("voting is: -1")
         return -1
     else:
+        # print("voting is: 1")
         return 1
+
 
 
 def compute_error(best_rules, k, points):
@@ -72,6 +75,7 @@ def compute_error(best_rules, k, points):
     for point in points:
         if voting(best_rules, k, point) == -1:
             missclassification += 1
+    # print("missclassification:", missclassification)
     return missclassification / len(points)
 
 
@@ -119,6 +123,8 @@ def run(features_df, labels_df):
         else:
             minimal_error_rule["weight"] = MAX_WEIGHT  # TODO: risky
         best_rules.append(minimal_error_rule)
+        # print("minimal error rule:", minimal_error_rule)
+        # print("current best rules list", best_rules)
 
         # update all points weights
         for p in weighted_points:
@@ -128,9 +134,9 @@ def run(features_df, labels_df):
                                                                     minimal_error_rule["rule"].classify(p["point"]) *
                                                                     p["point"].type))
         # clear rules errors # TODO: risky
-        for rule in w_e_rules:
-            rule["error"] = 0
-            rule["weight"] = 0
+        # for rule in w_e_rules:
+        #     rule["error"] = 0
+        #     rule["weight"] = 0
 
 
     # at this point we have the list of 8 best rules after one adaboost run
@@ -141,6 +147,7 @@ def run(features_df, labels_df):
     #   etc..
     #   do the computing here
     #
+    # print(best_rules)
     hkx_stats = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(k)]
     for i in range(k):
         hkx_stats[i]["empirical_error_on_test"] = compute_error(best_rules, i, test_points)
