@@ -59,8 +59,11 @@ def rules_from_points(points_list):
 
 def voting(best_rules, k, point):
     aihix_sum = 0
-    for i in range(k):
+    # print("voting:", k)
+    i = 0
+    while i <= k:
         aihix_sum += best_rules[i]["weight"] * best_rules[i]["rule"].classify(point)
+        i += 1
     if aihix_sum < 0:
         # print("voting is: -1")
         return -1
@@ -71,11 +74,13 @@ def voting(best_rules, k, point):
 
 
 def compute_error(best_rules, k, points):
+    # print("compute_error k:", k)
     missclassification = 0
     for point in points:
-        if voting(best_rules, k, point) == -1:
+        classification = voting(best_rules, k, point)
+        if classification == -1:
             missclassification += 1
-    # print("missclassification:", missclassification)
+    print("missclassification:", missclassification)
     return missclassification / len(points)
 
 
@@ -150,6 +155,7 @@ def run(features_df, labels_df):
     # print(best_rules)
     hkx_stats = [{"empirical_error_on_test": 0.0, "true_error_on_training": 0.0} for _ in range(k)]
     for i in range(k):
+        # print("hkx_stats[i]", i)
         hkx_stats[i]["empirical_error_on_test"] = compute_error(best_rules, i, test_points)
         hkx_stats[i]["true_error_on_training"] = compute_error(best_rules, i, train_points)
 
